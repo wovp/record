@@ -5,17 +5,19 @@ class showService{
   public store: relationalStore.RdbStore = null
   public dbManage: dbManager
   constructor(store: relationalStore.RdbStore) {
-    // 传递store
     this.store = store
     console.log('这是传递store');
     this.dbManage = new dbManager(this.store)
   }
-  public async showAllRecord(){
+
+  public async showAllRecord(): Promise<any[]> {
     let resultSet = await this.dbManage.selectAllRecord()
     // 遍历所有的行，取出json数据，放到json数组中
     let list_records: any[] = [];
     for(let i = 0; i < resultSet.rowCount; i++){
-      resultSet.goToNextRow()
+      if(!resultSet.isEnded){
+        resultSet.goToNextRow()
+      }
       let record = {};
       for(let j = 0; j < this.rowName.length; j++){
 

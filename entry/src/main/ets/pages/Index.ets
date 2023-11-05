@@ -1,3 +1,4 @@
+import relationalStore from '@ohos.data.relationalStore'
 import dbCreater from '../dbManage/dbCreater'
 import dbManager from '../dbManage/dbManager'
 import showService from '../services/showServices'
@@ -7,7 +8,7 @@ struct Index {
   @State message: string = 'Hello World'
   public dbstore
   context = getContext()
-  public store
+  public store: relationalStore.RdbStore
   public showService: showService
   @State list_records: any[] = []
   async aboutToAppear() {
@@ -22,23 +23,20 @@ struct Index {
       "PURPOSE": '00',
       "DATE": '00'
     };
-    this.store.insert("EXPENSES", valueBucket1);
-    console.info('这是初始化成功:');
+    let tt = await this.store.insert("EXPENSES", valueBucket1);
+    console.info('这是初始化成功, 行数为:' + tt);
     this.list_records = await this.showService.showAllRecord()
-    console.info('这是list: ' + JSON.stringify(this.list_records))
+    console.info('这是showAllRecord后');
+    console.info('这是list: ' + this.list_records[0].AMOUNT)
   }
 
   build() {
     List() {
       ForEach(this.list_records, (item) => {
         ListItem() {
-          Row() {
-            Text(item.AMOUNT).fontSize(50)
-          }
-          .width('100%')
-          .justifyContent(FlexAlign.Start)
+            Text(String(item.AMOUNT))
         }
-      }, item => item.key)
+      }, item => item.ID)
     }
     .width('100%')
     .height('100%')
