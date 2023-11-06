@@ -11,6 +11,7 @@ struct Index {
   public store: relationalStore.RdbStore
   public showService: showService
   @State list_records: any[] = []
+
   async aboutToAppear() {
     let dbc = new dbCreater()
     this.dbstore = await dbc.initialize(this.context)
@@ -31,14 +32,65 @@ struct Index {
   }
 
   build() {
-    List() {
-      ForEach(this.list_records, (item) => {
-        ListItem() {
-            Text(String(item.AMOUNT))
-        }
-      }, item => item.ID)
+    Column() {
+      Row(){
+        Text('ces')
+
+      }
+      .backgroundColor(Color.Red)
+      .width('100%')
+      .height(100)
+      List() {
+        ForEach(this.list_records, (item) => {
+          ListItem() {
+            Row() {
+              Row() {
+                Text("颜色")
+              }
+              .backgroundColor(Color.Black)
+
+              Column() {
+                Column() {
+                  Text('分类')
+                }
+                .backgroundColor(Color.Yellow)
+
+                Column() {
+                  Text('金额')
+                }
+                .backgroundColor(Color.Blue)
+              }
+              .justifyContent(FlexAlign.Center)
+
+              Row() {
+                Text('时间')
+              }
+              .backgroundColor(Color.Gray)
+            }
+            // .backgroundColor(Color.Red)
+            .width('100%')
+            .justifyContent(FlexAlign.SpaceEvenly)
+
+          }
+          .height(100)
+          .backgroundColor(Color.Green)
+
+        }, item => item.ID)
+      }
+      .alignListItem(ListItemAlign.Center)
+      .width('100%')
+      Row(){
+        Text('ces')
+        Button('添加记录')
+        Text('ces')
+      }
+      .width('100%')
+      .height(100)
+      .justifyContent(FlexAlign.SpaceBetween)
     }
     .width('100%')
     .height('100%')
+    .justifyContent(FlexAlign.SpaceBetween)
+
   }
 }
