@@ -6,33 +6,44 @@ class dbManager {
     this.store = store
     console.log('这是传递store');
   }
-  public insertRecord(amount: number, notes: string, type: string, purpose: string, date: string){
-    const valueBucket = {
-      "amount": amount,
-      "notes": notes,
-      "type": type,
-      "purpose": purpose,
-      "date": date,
-    };
-    this.store.insert('EXPENSES', valueBucket, function (err, rowId) {
-      if (err) {
-        console.error(`Insert is failed, code is ${err.code},message is ${err.message}`);
-        return;
-      }
-      console.info(`Insert is successful, rowId = ${rowId}`);
-    })
+  public async insertRecord(updatedValues: { amount?: number, notes?: string, type?: string, purpose?: string, date?: string }): Promise<number>{
+    let tt = await this.store.insert('EXPENSES', updatedValues)
+    return tt;
   }
 
   public async selectAllRecord(){
     let resultSet = await this.store.querySql("SELECT * FROM EXPENSES");
     return resultSet
-    // promise.then((resultSet) => {
-    //   console.info(`ResultSet column names: ${resultSet.columnNames}`);
-    //   console.info(`ResultSet column count: ${resultSet.columnCount}`);
-    //   return resultSet
-    // }).catch((err) => {
-    //   console.error(`Query failed, code is ${err.code},message is ${err.message}`);
-    // })
   }
+
+  public async updateRecord(recordId: number, updatedValues: { amount?: number, notes?: string, type?: string, purpose?: string, date?: string }): Promise<boolean> {
+
+    let predicates = new relationalStore.RdbPredicates("EXPENSES");
+    predicates.equalTo("id", recordId);
+    // 执行更新操作
+    const tt = await this.store.update(updatedValues, predicates);
+    // 返回更新是否成功
+    return tt > 0; // 如果更新的行数大于0，表示更新成功
+  }
+
+  public async deleteRecord(recordId: number): Promise<boolean> {
+    // 构建删除条件
+    let predicates = new relationalStore.RdbPredicates("EMPLOYEE");
+    predicates.equalTo("id", recordId);
+
+    // 执行删除操作
+    const deleteResult = await this.store.delete(predicates);
+
+    // 返回删除是否成功
+    return deleteResult > 0; // 如果删除的行数大于0，表示删除成功
+  }
+
+  public async selectBySql(sql: string){
+    let resultSet = await this.store.querySql(sql);
+    return resultSet
+  }
+
+
+
 }
 export default dbManager;
