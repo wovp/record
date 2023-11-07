@@ -19,6 +19,15 @@ struct Index {
   @State newAccount: Record = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '00', purpose: '00', date: '00'};
   @State ca_list_records: any[] = []
 
+  @Builder itemHead(text: string) {
+    // 列表分组的头部组件，对应联系人分组A、B等位置的组件
+    Text(text)
+      .fontSize(20)
+      .backgroundColor('#fff1f3f5')
+      .width('100%')
+      .padding(5)
+  }
+
   async aboutToAppear() {
     let dbc = new dbCreater()
     this.dbstore = await dbc.initialize(this.context)
@@ -47,38 +56,43 @@ struct Index {
       .height(100)
 
       List() {
-        ForEach(this.list_records, (item: Record) => {
-          ListItem() {
-            Row() {
-              Row() {
-                Text("颜色")
-              }
+        ForEach(this.ca_list_records, li =>{
+          ListItemGroup({ header: this.itemHead(li.date) }){
+            ForEach(li.list_records, (item: Record) => {
+              ListItem() {
+                Row() {
+                  Row() {
+                    Text("颜色")
+                  }
 
-              Column() {
-                Column() {
-                  Text('分类')
-                  Text(item.typeText)
+                  Column() {
+                    Column() {
+                      Text('分类')
+                      Text(item.typeText)
+                    }
+
+                    Column() {
+                      Text('金额')
+                      Text(item.amount.toString())
+                    }
+                  }
+                  .justifyContent(FlexAlign.Center)
+
+                  Row() {
+                    Text(item.date)
+                  }
                 }
+                // .backgroundColor(Color.Red)
+                .width('100%')
+                .justifyContent(FlexAlign.SpaceEvenly)
 
-                Column() {
-                  Text('金额')
-                  Text(item.amount.toString())
-                }
               }
-              .justifyContent(FlexAlign.Center)
+              .height(100)
 
-              Row() {
-                Text(item.date)
-              }
-            }
-            // .backgroundColor(Color.Red)
-            .width('100%')
-            .justifyContent(FlexAlign.SpaceEvenly)
-
+            }, item => item.id)
           }
-          .height(100)
+        })
 
-        }, item => item.id)
       }
       .alignListItem(ListItemAlign.Center)
       .width('100%')
