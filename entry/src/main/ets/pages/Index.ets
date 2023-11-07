@@ -18,32 +18,17 @@ struct Index {
   @State isInsert: boolean = false;
   @State newAccount: Record = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '', purpose: '', date: ''};
 
-  dialogController: CustomDialogController = new CustomDialogController({
-    builder: DialogComponent({
-      isInsert: $isInsert,
-      newAccount: $newAccount,
-      confirm: (isInsert: boolean, newAccount: Record) => this.accept(isInsert, newAccount)
-    }),
-    customStyle: true,
-    alignment: DialogAlignment.Bottom
-  });
-  accept(a, b){
-
+  accept(isInsert, newAccount){
+    console.log(newAccount);
   }
   async aboutToAppear() {
     let dbc = new dbCreater()
     this.dbstore = await dbc.initialize(this.context)
     this.store = dbc.store
     this.showService = new showService(this.store)
-    const valueBucket1 = {
-      "AMOUNT": 50.0,
-      "NOTES": '00',
-      "TYPE": '00',
-      "PURPOSE": '00',
-      "DATE": '00'
-    };
-    let tt = await this.store.insert("EXPENSES", valueBucket1);
-    console.info('这是初始化成功, 行数为:' + tt);
+
+    // let tt = await this.store.insert("EXPENSES", valueBucket1);
+    // console.info('这是初始化成功, 行数为:' + tt);
     this.list_records = await this.showService.showAllRecord()
     console.info('这是showAllRecord后');
     console.info('这是list: ' + this.list_records[0].AMOUNT)
@@ -100,17 +85,6 @@ struct Index {
         .alignListItem(ListItemAlign.Center)
         .width('100%')
 
-        Button() {
-          Image($rawfile('add.png'))
-        }
-        .width('48vp')
-        .height('48vp')
-        .position({ x: '75%', y: '75%' })
-        .onClick(() => {
-          this.isInsert = true;
-          this.newAccount = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '', purpose: '', date: ''};
-          this.dialogController.open();
-        })
 
         Row() {
           Text('ces')
@@ -118,7 +92,7 @@ struct Index {
             .onClick(() => {
               this.isInsert = true;
               this.newAccount = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '', purpose: '', date: ''};
-              this.dialogController.open();
+              onJumpClick()
             })
           Text('ces')
         }
@@ -132,4 +106,27 @@ struct Index {
 
     }
   }
+}
+
+// 在Home页面中
+function onJumpClick(): void {
+  const valueBucket1: Record =  {
+    id: -1,
+    amount: 50.0,
+    notes: '00',
+    typeText: '00',
+    date: '00',
+    accountType: 0,
+    purpose: '00'
+  };
+  router.pushUrl({
+    url: 'pages/add', // 目标url
+    params: valueBucket1
+  }, router.RouterMode.Standard, (err) => {
+    if (err) {
+      console.error(`Invoke pushUrl failed, code is ${err.code}, message is ${err.message}`);
+      return;
+    }
+    console.info('Invoke pushUrl succeeded.');
+  });
 }

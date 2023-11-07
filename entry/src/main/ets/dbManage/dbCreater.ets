@@ -10,7 +10,7 @@ class dbCreater  {
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
         AMOUNT REAL NOT NULL,
         NOTES TEXT,
-        TYPE TEXT,
+        MYTYPE TEXT,
         PURPOSE TEXT,
         DATE TEXT
       )

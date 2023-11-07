@@ -19,6 +19,7 @@ import CommonConstants from '../constants/CommonConstants'
 import Record from '../model/record'
 import { PayList, EarnList } from '../model/AccountList';
 
+
 @CustomDialog
 export struct DialogComponent {
   controller?: CustomDialogController;
@@ -32,6 +33,7 @@ export struct DialogComponent {
   @State bgColor: string = '';
   @State curIndex: number = 0;
   @State curType: string = '';
+  @State selectedDate: Date = new Date("2010-1-1")
 
   @Builder
   TabBuilder(index: number) {
@@ -118,7 +120,7 @@ export struct DialogComponent {
                     .fontColor(this.curType === item.typeText ? Color.White : '#FF007DFF')
                     .margin({ top: ('8vp') })
                 }
-                .width('64vpP')
+                .width('64vp')
                 .aspectRatio(CommonConstants.FULL_SIZE)
                 .padding({ top: ('12vp') })
                 .margin({ top: ('16vp'), left: ('12vp') })
@@ -148,7 +150,7 @@ export struct DialogComponent {
       Column() {
         Text('金额')
           .width(CommonConstants.FULL_WIDTH)
-          .fontSize('20vpP')
+          .fontSize('20vp')
           .fontColor(Color.Black)
 
         Column() {
@@ -168,6 +170,28 @@ export struct DialogComponent {
         .padding({ top: ('15vp'), bottom: ('11vp') })
         .borderWidth({ bottom: CommonConstants.FULL_SIZE })
         .borderColor('#33182431')
+        Button("DatePickerDialog")
+          .margin(20)
+          .width(CommonConstants.FULL_WIDTH)
+          .height('40vp')
+          .onClick(() => {
+            DatePickerDialog.show({
+              start: new Date("2000-1-1"),
+              end: new Date("2100-12-31"),
+              selected: this.selectedDate,
+              onAccept: (value: DatePickerResult) => {
+                // 通过Date的setFullYear方法设置按下确定按钮时的日期，这样当弹窗再次弹出时显示选中的是上一次确定的日期
+                this.selectedDate.setFullYear(value.year, value.month, value.day)
+                console.info("DatePickerDialog:onAccept()" + JSON.stringify(value))
+              },
+              onCancel: () => {
+                console.info("DatePickerDialog:onCancel()")
+              },
+              onChange: (value: DatePickerResult) => {
+                console.info("DatePickerDialog:onChange()" + JSON.stringify(value))
+              }
+            })
+          })
       }
       .width(CommonConstants.FULL_WIDTH)
       .padding({ left: ('12vp'), right: ('12vp') })
