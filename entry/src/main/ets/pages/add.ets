@@ -265,7 +265,9 @@ struct addComponent {
             let tmp01 = ttt.split('/')
             let tmp0101 = tmp01[0]
             tmp01[0] = tmp01[2]
-            tmp01[2] = tmp0101
+            tmp01[2] = tmp01[1]
+            tmp01[1] = tmp0101
+
 
             ttt = ''+ tmp01[0] + '-' + tmp01[1] + '-' + tmp01[2]
 

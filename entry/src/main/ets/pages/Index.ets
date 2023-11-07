@@ -17,6 +17,7 @@ struct Index {
   @State isEdit: boolean = false;
   @State isInsert: boolean = false;
   @State newAccount: Record = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '00', purpose: '00', date: '00'};
+  @State ca_list_records: any[] = []
 
   async aboutToAppear() {
     let dbc = new dbCreater()
@@ -25,82 +26,113 @@ struct Index {
     this.showService = new showService(this.store)
 
     this.list_records = await this.showService.showAllRecord()
+    this.mk_date_list_records_init()
     console.info('这是showAllRecord后');
   }
   async onPageShow(){
     this.list_records = await this.showService.showAllRecord()
+    this.mk_date_list_records_init()
     console.info('onPageShow');
   }
 
   build() {
-    Stack() {
-      Column() {
-        Row() {
-          Text('ces')
 
-        }
-        .backgroundColor(Color.Red)
-        .width('100%')
-        .height(100)
+    Column() {
+      Row() {
+        Text('ces')
 
-        List() {
-          ForEach(this.list_records, (item: Record) => {
-            ListItem() {
+      }
+      .backgroundColor(Color.Red)
+      .width('100%')
+      .height(100)
+
+      List() {
+        ForEach(this.list_records, (item: Record) => {
+          ListItem() {
+            Row() {
               Row() {
-                Row() {
-                  Text("颜色")
+                Text("颜色")
+              }
+
+              Column() {
+                Column() {
+                  Text('分类')
+                  Text(item.typeText)
                 }
 
                 Column() {
-                  Column() {
-                    Text('分类')
-                    Text(item.typeText)
-                  }
-
-                  Column() {
-                    Text('金额')
-                    Text(item.amount.toString())
-                  }
-                }
-                .justifyContent(FlexAlign.Center)
-
-                Row() {
-                  Text(item.date)
+                  Text('金额')
+                  Text(item.amount.toString())
                 }
               }
-              // .backgroundColor(Color.Red)
-              .width('100%')
-              .justifyContent(FlexAlign.SpaceEvenly)
+              .justifyContent(FlexAlign.Center)
 
+              Row() {
+                Text(item.date)
+              }
             }
-            .height(100)
+            // .backgroundColor(Color.Red)
+            .width('100%')
+            .justifyContent(FlexAlign.SpaceEvenly)
 
-          }, item => item.id)
-        }
-        .alignListItem(ListItemAlign.Center)
-        .width('100%')
+          }
+          .height(100)
+
+        }, item => item.id)
+      }
+      .alignListItem(ListItemAlign.Center)
+      .width('100%')
 
 
-        Row() {
-          Text('ces')
-          Button('添加记录')
-            .onClick(() => {
-              this.isInsert = true;
-              this.newAccount = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '', purpose: '', date: ''};
-              onJumpClick()
-            })
-          Text('ces')
-        }
-        .width('100%')
-        .height(100)
-        .justifyContent(FlexAlign.SpaceBetween)
+      Row() {
+        Text('ces')
+        Button('添加记录')
+          .onClick(() => {
+            this.isInsert = true;
+            this.newAccount = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '', purpose: '', date: ''};
+            onJumpClick()
+          })
+        Text('ces')
       }
       .width('100%')
-      .height('100%')
+      .height(100)
       .justifyContent(FlexAlign.SpaceBetween)
-
     }
+    .width('100%')
+    .height('100%')
+    .justifyContent(FlexAlign.SpaceBetween)
+
   }
+
+  mk_date_list_records_init(){
+    const date_set = new Set<String>()
+    this.ca_list_records = []
+
+    for (let i = 0; i < this.list_records.length; i++){
+      const record = this.list_records[i];
+      if(date_set.has(record.date)){
+
+        for (let index = 0; index < this.ca_list_records.length; index++) {
+          const element = this.ca_list_records[index];
+          if (element.date === record.date) {
+            this.ca_list_records[index].list_records.push(record)
+            break;
+          }
+        }
+
+      }
+
+      else{
+        date_set.add(this.list_records[i].date)
+        this.ca_list_records.push({
+          date: this.list_records[i].date,
+          list_records: [this.list_records[i]]
+        })
+      }
+    }
+    console.info('这是' + this.ca_list_records)
+  }
+
 }
 
 // 在Home页面中
