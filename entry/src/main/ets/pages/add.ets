@@ -24,7 +24,6 @@ import router from '@ohos.router';
 struct addComponent {
   isInsert: boolean;
   newAccount: Record;
-  confirm?: (isInsert: boolean, newAccount: Record) => void;
   private scroller: Scroller = new Scroller();
   private inputAmount = '';
   @State payList: Array<recordItem> = PayList;
@@ -157,6 +156,31 @@ struct addComponent {
       })
 
       Column() {
+        Button("DatePickerDialog")
+          .margin(20)
+          .width(CommonConstants.FULL_WIDTH)
+          .height('20')
+          .onClick(() => {
+            DatePickerDialog.show({
+              start: new Date("2000-1-1"),
+              end: new Date("2100-12-31"),
+              selected: this.selectedDate,
+              onAccept: (value: DatePickerResult) => {
+                // 通过Date的setFullYear方法设置按下确定按钮时的日期，这样当弹窗再次弹出时显示选中的是上一次确定的日期
+                this.selectedDate.setFullYear(value.year, value.month, value.day)
+                console.info("DatePickerDialog:onAccept()" + JSON.stringify(value))
+              },
+              onCancel: () => {
+                console.info("DatePickerDialog:onCancel()")
+              },
+              onChange: (value: DatePickerResult) => {
+                console.info("DatePickerDialog:onChange()" + JSON.stringify(value))
+              }
+            })
+          })
+      }
+      .width(CommonConstants.FULL_WIDTH)
+      .padding({ left: ('12vp'), right: ('12vp') })
         Text('金额')
           .width(CommonConstants.FULL_WIDTH)
           .fontSize('20vp')
@@ -179,31 +203,30 @@ struct addComponent {
         .padding({ top: ('15vp'), bottom: ('11vp') })
         .borderWidth({ bottom: CommonConstants.FULL_SIZE })
         .borderColor('#33182431')
-        Button("DatePickerDialog")
-          .margin(20)
+
+        Text('备注')
           .width(CommonConstants.FULL_WIDTH)
-          .height('40vp')
-          .onClick(() => {
-            DatePickerDialog.show({
-              start: new Date("2000-1-1"),
-              end: new Date("2100-12-31"),
-              selected: this.selectedDate,
-              onAccept: (value: DatePickerResult) => {
-                // 通过Date的setFullYear方法设置按下确定按钮时的日期，这样当弹窗再次弹出时显示选中的是上一次确定的日期
-                this.selectedDate.setFullYear(value.year, value.month, value.day)
-                console.info("DatePickerDialog:onAccept()" + JSON.stringify(value))
-              },
-              onCancel: () => {
-                console.info("DatePickerDialog:onCancel()")
-              },
-              onChange: (value: DatePickerResult) => {
-                console.info("DatePickerDialog:onChange()" + JSON.stringify(value))
-              }
-            })
+          .fontSize('20vp')
+          .fontColor(Color.Black)
+
+        Column() {
+          TextInput({
+            placeholder: ('备注'),
+            text: this.newAccount.amount === 0 ? this.inputAmount : this.newAccount.amount.toString()
           })
-      }
-      .width(CommonConstants.FULL_WIDTH)
-      .padding({ left: ('12vp'), right: ('12vp') })
+            .padding({ left: CommonConstants.MINIMUM_SIZE })
+            .borderRadius(CommonConstants.MINIMUM_SIZE)
+            .backgroundColor(Color.White)
+            .type(InputType.Number)
+            .onChange((value: string) => {
+              this.inputAmount = value;
+            })
+        }
+        .height('48vp')
+        .padding({ top: ('15vp'), bottom: ('11vp') })
+        .borderWidth({ bottom: CommonConstants.FULL_SIZE })
+        .borderColor('#33182431')
+
 
       Column() {
         Button() {
@@ -222,7 +245,6 @@ struct addComponent {
             let matchValue: Array<string> | null = this.inputAmount.match(regex);
             if (matchValue !== null && matchValue[0] === this.inputAmount) {
               this.newAccount.amount = Number(this.inputAmount);
-              this.confirm && this.confirm(this.isInsert, this.newAccount);
             } else {
               prompt.showToast({ message: CommonConstants.TOAST_TEXT_2, bottom: CommonConstants.PROMPT_BOTTOM });
             }
