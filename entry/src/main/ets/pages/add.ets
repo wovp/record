@@ -18,6 +18,7 @@ import recordItem from '../model/recordItem';
 import CommonConstants from '../constants/CommonConstants'
 import Record from '../model/record'
 import { PayList, EarnList } from '../model/AccountList';
+import router from '@ohos.router';
 @Entry
 @Component
 struct addComponent {
@@ -50,6 +51,16 @@ struct addComponent {
   }
 
   aboutToAppear() {
+    let ss = router.getParams()
+    this.newAccount = {
+      id: ss['id'],
+      accountType: ss['accountType'],
+      typeText: ss['typeText'],
+      notes: ss['notes'],
+      purpose: ss['purpose'],
+      amount: ss['amount'],
+      date: ss['date']
+    };
     this.inputAmount = this.newAccount.amount.toString();
     this.curIndex = this.newAccount.accountType;
     this.curType = this.newAccount.typeText;
@@ -203,6 +214,7 @@ struct addComponent {
         .width(CommonConstants.FULL_WIDTH)
         .height('40vp')
         .onClick(() => {
+          router.back()
           if (this.newAccount.typeText === '' || this.curIndex !== this.newAccount.accountType) {
             prompt.showToast({ message: CommonConstants.TOAST_TEXT_1, bottom: CommonConstants.PROMPT_BOTTOM });
           } else {
