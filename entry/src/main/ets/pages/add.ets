@@ -19,6 +19,9 @@ import CommonConstants from '../constants/CommonConstants'
 import Record from '../model/record'
 import { PayList, EarnList } from '../model/AccountList';
 import router from '@ohos.router';
+import manageService from '../services/manageService';
+import relationalStore from '@ohos.data.relationalStore';
+import DatePickerDialogExample from '../view/dateDialog';
 @Entry
 @Component
 struct addComponent {
@@ -26,12 +29,15 @@ struct addComponent {
   newAccount: Record;
   private scroller: Scroller = new Scroller();
   private inputAmount = '';
+  public manage_service: manageService = null
   @State payList: Array<recordItem> = PayList;
   @State earnList: Array<recordItem> = EarnList;
-  @State bgColor: string = '';
   @State curIndex: number = 0;
   @State curType: string = '';
-  @State selectedDate: Date = new Date("2010-1-1")
+  selectedDate: Date = new Date("2010-1-1");
+  @State inputNotes: string = '';
+
+
 
   @Builder
   TabBuilder(index: number) {
@@ -49,7 +55,7 @@ struct addComponent {
                                       } : { color: Color.White })
   }
 
-  aboutToAppear() {
+  async aboutToAppear() {
     let ss = router.getParams()
     this.newAccount = {
       id: ss['id'],
@@ -63,6 +69,9 @@ struct addComponent {
     this.inputAmount = this.newAccount.amount.toString();
     this.curIndex = this.newAccount.accountType;
     this.curType = this.newAccount.typeText;
+    let mm = new manageService()
+    await mm.init()
+    this.manage_service = mm
   }
 
   selectAccount(item: recordItem) {
@@ -81,6 +90,7 @@ struct addComponent {
         })
 
       Tabs({ barPosition: BarPosition.Start, index: this.curIndex }) {
+
         TabContent() {
           Scroll(this.scroller) {
             Row() {
@@ -147,6 +157,7 @@ struct addComponent {
         .tabBar(this.TabBuilder(1))
         .margin({ bottom: ('36vp') })
       }
+
       .width(CommonConstants.FULL_WIDTH)
       .height(CommonConstants.TABS_HEIGHT)
       .vertical(false)
@@ -156,10 +167,10 @@ struct addComponent {
       })
 
       Column() {
+        // DatePickerDialogExample({selectedDate: $selectedDate})
+        // DatePickerDialogExample()
         Button("DatePickerDialog")
           .margin(20)
-          .width(CommonConstants.FULL_WIDTH)
-          .height('20')
           .onClick(() => {
             DatePickerDialog.show({
               start: new Date("2000-1-1"),
@@ -211,15 +222,15 @@ struct addComponent {
 
         Column() {
           TextInput({
-            placeholder: ('备注'),
-            text: this.newAccount.amount === 0 ? this.inputAmount : this.newAccount.amount.toString()
+            placeholder: ('请输入备注'),
+            text: this.newAccount.notes == '' ? this.inputNotes : this.newAccount.notes.toString()
           })
             .padding({ left: CommonConstants.MINIMUM_SIZE })
             .borderRadius(CommonConstants.MINIMUM_SIZE)
             .backgroundColor(Color.White)
-            .type(InputType.Number)
+            .type(InputType.Normal)
             .onChange((value: string) => {
-              this.inputAmount = value;
+              this.inputNotes = value;
             })
         }
         .height('48vp')
@@ -236,8 +247,7 @@ struct addComponent {
         }
         .width(CommonConstants.FULL_WIDTH)
         .height('40vp')
-        .onClick(() => {
-          router.back()
+        .onClick(async () => {
           if (this.newAccount.typeText === '' || this.curIndex !== this.newAccount.accountType) {
             prompt.showToast({ message: CommonConstants.TOAST_TEXT_1, bottom: CommonConstants.PROMPT_BOTTOM });
           } else {
@@ -248,7 +258,12 @@ struct addComponent {
             } else {
               prompt.showToast({ message: CommonConstants.TOAST_TEXT_2, bottom: CommonConstants.PROMPT_BOTTOM });
             }
+            this.newAccount.notes = this.inputNotes
+            this.newAccount.date = this.selectedDate.toString()
+            await this.manage_service.addRecord(this.newAccount)
+
           }
+          router.back()
         })
       }
       .layoutWeight(CommonConstants.FULL_SIZE)

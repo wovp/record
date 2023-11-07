@@ -18,9 +18,6 @@ struct Index {
   @State isInsert: boolean = false;
   @State newAccount: Record = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '', purpose: '', date: ''};
 
-  accept(isInsert, newAccount){
-    console.log(newAccount);
-  }
   async aboutToAppear() {
     let dbc = new dbCreater()
     this.dbstore = await dbc.initialize(this.context)
