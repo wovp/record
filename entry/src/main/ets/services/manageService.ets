@@ -10,7 +10,7 @@ class manageService {
   }
 
   public async addRecord(record: Record){
-    const updatedValues = { amount: record.amount, notes: record.notes, mytype: record.typeText, purpose: record.purpose, date: record.date }
+    const updatedValues = { amount: record.amount, notes: record.notes, mytype: record.typeText, purpose: record.purpose, date: record.date, accountType: record.accountType }
     let tt = await this.store.insert('EXPENSES', updatedValues)
     console.info('成功插入')
     console.log('这是' + updatedValues.amount.toString())

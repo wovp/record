@@ -2,7 +2,7 @@ import relationalStore from '@ohos.data.relationalStore';
 import dbManager from '../dbManage/dbManager';
 import Record from '../model/record';
 class showService{
-  public rowName = ['ID', 'AMOUNT', 'NOTES', 'MYTYPE', 'PURPOSE', 'DATE']
+  public rowName = ['ID', 'AMOUNT', 'NOTES', 'MYTYPE', 'PURPOSE', 'DATE', 'ACCOUNTTYPE']
   public store: relationalStore.RdbStore = null
   public dbManage: dbManager
   constructor(store: relationalStore.RdbStore) {
@@ -22,7 +22,7 @@ class showService{
       for(let j = 0; j < this.rowName.length; j++){
 
         let k = resultSet.getColumnIndex(this.rowName[j])
-        if (this.rowName[j] == 'ID') {
+        if (this.rowName[j] == 'ID' || this.rowName[j] == 'ACCOUNTTYPE') {
           record[this.rowName[j]] = resultSet.getLong(k)
         }
         else if (this.rowName[j] == 'AMOUNT') {
@@ -39,6 +39,7 @@ class showService{
       re.typeText = record['MYTYPE']
       re.purpose = record['PURPOSE']
       re.date = record['DATE']
+      re.accountType = record['ACCOUNTTYPE']
       list_records.push(re)
     }
     return list_records

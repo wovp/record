@@ -10,6 +10,7 @@ class dbCreater  {
         ID INTEGER PRIMARY KEY AUTOINCREMENT,
         AMOUNT REAL NOT NULL,
         NOTES TEXT,
+        accountType REAL,
         MYTYPE TEXT,
         PURPOSE TEXT,
         DATE TEXT

@@ -1,7 +1,9 @@
 import relationalStore from '@ohos.data.relationalStore'
 import router from '@ohos.router'
+import CommonConstants from '../constants/CommonConstants'
 import dbCreater from '../dbManage/dbCreater'
 import dbManager from '../dbManage/dbManager'
+import { ImageList } from '../model/AccountList'
 import Record from '../model/record'
 import showService from '../services/showServices'
 import { DialogComponent } from '../view/DialogComponent'
@@ -61,30 +63,23 @@ struct Index {
             ForEach(li.list_records, (item: Record) => {
               ListItem() {
                 Row() {
-                  Row() {
-                    Text("颜色")
-                  }
+                  Image(ImageList[item.typeText])
+                    .width('40vp')
+                    .aspectRatio(CommonConstants.FULL_SIZE)
+                    .margin({ right: '16vp' })
 
-                  Column() {
-                    Column() {
-                      Text('分类')
-                      Text(item.typeText)
-                    }
+                  Text(item.typeText)
+                    .height('22vp')
+                    .fontSize('16vp')
 
-                    Column() {
-                      Text('金额')
-                      Text(item.amount.toString())
-                    }
-                  }
-                  .justifyContent(FlexAlign.Center)
-
-                  Row() {
-                    Text(item.date)
-                  }
+                  Blank()
+                    .layoutWeight(1)
+                  Text(item.accountType === 0 ? '-' + item.amount.toString() : '+' + item.amount.toString())
+                    .fontSize('16vp')
+                    .fontColor(item.accountType === 0 ? '#FFE84826' : '#FF007DFF')
+                    .align(Alignment.End)
+                    .flexGrow(CommonConstants.FULL_SIZE)
                 }
-                // .backgroundColor(Color.Red)
-                .width('100%')
-                .justifyContent(FlexAlign.SpaceEvenly)
 
               }
               .height(100)
@@ -96,21 +91,17 @@ struct Index {
       }
       .alignListItem(ListItemAlign.Center)
       .width('100%')
-
-
-      Row() {
-        Text('ces')
-        Button('添加记录')
-          .onClick(() => {
-            this.isInsert = true;
-            this.newAccount = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '', purpose: '', date: ''};
-            onJumpClick()
-          })
-        Text('ces')
+      Button(){
+        Image($rawfile('add.png'))
       }
-      .width('100%')
-      .height(100)
-      .justifyContent(FlexAlign.SpaceBetween)
+      .width('48vp')
+      .height('48vp')
+      .position({ x: CommonConstants.EDIT_POSITION_X, y: CommonConstants.EDIT_POSITION_Y })
+      .onClick(() => {
+        this.isInsert = true;
+        this.newAccount = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '', purpose: '', date: ''};
+        onJumpClick()
+      })
     }
     .width('100%')
     .height('100%')
