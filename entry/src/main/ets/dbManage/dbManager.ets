@@ -12,7 +12,7 @@ class dbManager {
   }
 
   public async selectAllRecord(){
-    let resultSet = await this.store.querySql("SELECT * FROM EXPENSES");
+    let resultSet = await this.store.querySql("SELECT * FROM EXPENSES ORDER BY DATE DESC");
     return resultSet
   }
 
