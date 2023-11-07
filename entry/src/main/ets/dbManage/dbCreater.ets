@@ -24,7 +24,6 @@ class dbCreater  {
             console.error(`Get RdbStore failed, code is ${err.code}, message is ${err.message}`);
             reject(err);
           } else {
-            console.info(`这是创建数据库`);
             store.executeSql(SQL_CREATE_TABLE); // 创建数据表
             this.store = store;
             resolve(store);

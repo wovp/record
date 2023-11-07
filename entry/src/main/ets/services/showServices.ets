@@ -1,19 +1,19 @@
 import relationalStore from '@ohos.data.relationalStore';
 import dbManager from '../dbManage/dbManager';
+import Record from '../model/record';
 class showService{
-  public rowName = ['ID', 'AMOUNT', 'NOTES', 'TYPE', 'PURPOSE', 'DATE']
+  public rowName = ['ID', 'AMOUNT', 'NOTES', 'MYTYPE', 'PURPOSE', 'DATE']
   public store: relationalStore.RdbStore = null
   public dbManage: dbManager
   constructor(store: relationalStore.RdbStore) {
     this.store = store
-    console.log('这是传递store');
     this.dbManage = new dbManager(this.store)
   }
 
   public async showAllRecord(): Promise<any[]> {
     let resultSet = await this.dbManage.selectAllRecord()
     // 遍历所有的行，取出json数据，放到json数组中
-    let list_records: any[] = [];
+    let list_records: Record[] = [];
     for(let i = 0; i < resultSet.rowCount; i++){
       if(!resultSet.isEnded){
         resultSet.goToNextRow()
@@ -32,7 +32,14 @@ class showService{
           record[this.rowName[j]] = resultSet.getString(k)
         }
       }
-      list_records.push(record)
+      let re: Record = new Record()
+      re.id = record['ID']
+      re.amount = record['AMOUNT']
+      re.notes = record['NOTES']
+      re.typeText = record['MYTYPE']
+      re.purpose = record['PURPOSE']
+      re.date = record['DATE']
+      list_records.push(re)
     }
     return list_records
   }

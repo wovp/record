@@ -13,10 +13,10 @@ struct Index {
   context = getContext()
   public store: relationalStore.RdbStore
   public showService: showService
-  @State list_records: any[] = []
+  @State list_records: Record[] = []
   @State isEdit: boolean = false;
   @State isInsert: boolean = false;
-  @State newAccount: Record = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '', purpose: '', date: ''};
+  @State newAccount: Record = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '00', purpose: '00', date: '00'};
 
   async aboutToAppear() {
     let dbc = new dbCreater()
@@ -24,11 +24,12 @@ struct Index {
     this.store = dbc.store
     this.showService = new showService(this.store)
 
-    // let tt = await this.store.insert("EXPENSES", valueBucket1);
-    // console.info('这是初始化成功, 行数为:' + tt);
     this.list_records = await this.showService.showAllRecord()
     console.info('这是showAllRecord后');
-    console.info('这是list: ' + this.list_records[0].AMOUNT)
+  }
+  async onPageShow(){
+    this.list_records = await this.showService.showAllRecord()
+    console.info('onPageShow');
   }
 
   build() {
@@ -43,31 +44,29 @@ struct Index {
         .height(100)
 
         List() {
-          ForEach(this.list_records, (item) => {
+          ForEach(this.list_records, (item: Record) => {
             ListItem() {
               Row() {
                 Row() {
                   Text("颜色")
                 }
-                .backgroundColor(Color.Black)
 
                 Column() {
                   Column() {
                     Text('分类')
+                    Text(item.typeText)
                   }
-                  .backgroundColor(Color.Yellow)
 
                   Column() {
                     Text('金额')
+                    Text(item.amount.toString())
                   }
-                  .backgroundColor(Color.Blue)
                 }
                 .justifyContent(FlexAlign.Center)
 
                 Row() {
-                  Text('时间')
+                  Text(item.date)
                 }
-                .backgroundColor(Color.Gray)
               }
               // .backgroundColor(Color.Red)
               .width('100%')
@@ -75,9 +74,8 @@ struct Index {
 
             }
             .height(100)
-            .backgroundColor(Color.Green)
 
-          }, item => item.ID)
+          }, item => item.id)
         }
         .alignListItem(ListItemAlign.Center)
         .width('100%')

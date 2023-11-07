@@ -259,7 +259,17 @@ struct addComponent {
               prompt.showToast({ message: CommonConstants.TOAST_TEXT_2, bottom: CommonConstants.PROMPT_BOTTOM });
             }
             this.newAccount.notes = this.inputNotes
-            this.newAccount.date = this.selectedDate.toString()
+
+            let ttt = this.selectedDate.toLocaleString().split(',')[0]
+            ttt = ttt.replace('时间', '')
+            let tmp01 = ttt.split('/')
+            let tmp0101 = tmp01[0]
+            tmp01[0] = tmp01[2]
+            tmp01[2] = tmp0101
+
+            ttt = ''+ tmp01[0] + '-' + tmp01[1] + '-' + tmp01[2]
+
+            this.newAccount.date = ttt
             await this.manage_service.addRecord(this.newAccount)
 
           }
