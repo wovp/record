@@ -6,6 +6,7 @@ import dbManager from '../dbManage/dbManager'
 import { ImageList } from '../model/AccountList'
 import Record from '../model/record'
 import showService from '../services/showServices'
+import manageService from '../services/manageService';
 import { DialogComponent } from '../view/DialogComponent'
 @Entry
 @Component
@@ -15,6 +16,7 @@ struct Index {
   context = getContext()
   public store: relationalStore.RdbStore
   public showService: showService
+  public manage_service: manageService = null
   @State list_records: Record[] = []
   @State isEdit: boolean = false;
   @State isInsert: boolean = false;
@@ -29,8 +31,10 @@ struct Index {
         .height(30)
         .backgroundColor(Color.White)
     }
-    .onClick(() => {
-
+    .onClick(async () => {
+      this.manage_service.deleteRecord(index)
+      this.list_records = await this.showService.showAllRecord()
+      this.mk_date_list_records_init()
     })
 
   }
@@ -53,6 +57,10 @@ struct Index {
     this.list_records = await this.showService.showAllRecord()
     this.mk_date_list_records_init()
     console.info('这是showAllRecord后');
+
+    let mm = new manageService()
+    await mm.init()
+    this.manage_service = mm
   }
   async onPageShow(){
     this.list_records = await this.showService.showAllRecord()
