@@ -21,6 +21,20 @@ struct Index {
   @State newAccount: Record = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '00', purpose: '00', date: '00'};
   @State ca_list_records: any[] = []
 
+  @Builder itemEnd(index: number) {
+    // 侧滑后尾端出现的组件
+    Button({ type: ButtonType.Circle }) {
+      Image($r('app.media.app_delete'))
+        .width(30)
+        .height(30)
+        .backgroundColor(Color.White)
+    }
+    .onClick(() => {
+
+    })
+
+  }
+
   @Builder itemHead(text: string) {
     // 列表分组的头部组件，对应联系人分组A、B等位置的组件
     Text(text)
@@ -82,6 +96,7 @@ struct Index {
                 }
 
               }
+              .swipeAction({ end: this.itemEnd.bind(this, item.id) }) // 设置侧滑属性
               .height(100)
 
             }, item => item.id)
@@ -89,7 +104,7 @@ struct Index {
         })
 
       }
-      .alignListItem(ListItemAlign.Center)
+      .alignListItem(ListItemAlign.Start)
       .width('100%')
       Button(){
         Image($rawfile('add.png'))
@@ -105,7 +120,7 @@ struct Index {
     }
     .width('100%')
     .height('100%')
-    .justifyContent(FlexAlign.SpaceBetween)
+    // .justifyContent(FlexAlign.SpaceBetween)
 
   }
 
