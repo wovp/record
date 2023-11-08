@@ -16,6 +16,8 @@ struct Index {
   public showService: showService         // 用于展示数据的服务接口
   public manage_service: manageService = null       // 用于处理数据的服务接口
   @State list_records: Record[] = []                // 查询到的所有记录
+  @State isSelected: boolean = false;
+  @State selected_records: Record[] = []            // 选中分类的记录列表，只在isSelected为True时有用
   // 用于传递参数，包括详情弹窗 和 添加
   @State newAccount: Record = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '00', purpose: '00', date: '00'};
   // 用于分时间展示数据
@@ -89,6 +91,27 @@ struct Index {
 
     Column() {
       Row() {
+        Select([{ value: '支出'},
+                { value: '收入' },
+          {value: '所有'}
+        ])
+          .selected(2)
+          .value('TTTTT')
+          .font({ size: 16, weight: 500 })
+          .fontColor('#182431')
+          .selectedOptionFont({ size: 16, weight: 400 })
+          .optionFont({ size: 16, weight: 400 })
+          .onSelect((index: number) => {
+            console.info('Select:' + index)
+            if(index === 2){
+              this.isSelected = false;
+              this.mk_date_list_records_init()
+            }
+            else {
+              this.selected_show(index)
+              this.mk_date_list_records_init()
+            }
+          })
         Text('ces')
 
       }
@@ -159,9 +182,10 @@ struct Index {
     // 第二项list_records 是一个数组，存的是同一时间的记录
     const date_set = new Set<String>()
     this.ca_list_records = []
+    const nn = this.isSelected ? this.selected_records: this.list_records;
 
-    for (let i = 0; i < this.list_records.length; i++){
-      const record = this.list_records[i];
+    for (let i = 0; i < nn.length; i++){
+      const record = nn[i];
       if(date_set.has(record.date)){
 
         for (let index = 0; index < this.ca_list_records.length; index++) {
@@ -175,14 +199,26 @@ struct Index {
       }
 
       else{
-        date_set.add(this.list_records[i].date)
+        date_set.add(nn[i].date)
         this.ca_list_records.push({
-          date: this.list_records[i].date,
-          list_records: [this.list_records[i]]
+          date: nn[i].date,
+          list_records: [nn[i]]
         })
       }
     }
     console.info('这是' + this.ca_list_records)
+  }
+
+  selected_show(ii: number){
+    const mm = this.list_records
+    this.selected_records = []
+    for (let index = 0; index < mm.length; index++) {
+      const element = mm[index];
+      if(element.accountType == ii){
+        this.selected_records.push(element)
+      }
+    }
+    this.isSelected = true
   }
 
 }
