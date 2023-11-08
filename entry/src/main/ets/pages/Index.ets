@@ -11,19 +11,17 @@ import { DialogComponent } from '../view/DialogComponent'
 @Entry
 @Component
 struct Index {
-  @State message: string = 'Hello World'
-  public dbstore
   context = getContext()
-  public store: relationalStore.RdbStore
-  public showService: showService
-  public manage_service: manageService = null
-  @State list_records: Record[] = []
-  @State isEdit: boolean = false;
-  @State isInsert: boolean = false;
+  public store: relationalStore.RdbStore  // 用于初始化数据库
+  public showService: showService         // 用于展示数据的服务接口
+  public manage_service: manageService = null       // 用于处理数据的服务接口
+  @State list_records: Record[] = []                // 查询到的所有记录
+  // 用于传递参数，包括详情弹窗 和 添加
   @State newAccount: Record = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '00', purpose: '00', date: '00'};
+  // 用于分时间展示数据
   @State ca_list_records: any[] = []
 
-  dialogController: CustomDialogController = new CustomDialogController({
+  dialogController: CustomDialogController = new CustomDialogController( {
     builder: DialogComponent({
       newAccount: $newAccount,
       confirm: (newAccount: Record) => this.accept(newAccount)
@@ -61,20 +59,27 @@ struct Index {
   }
 
   async aboutToAppear() {
+    // 初始化数据库
     let dbc = new dbCreater()
-    this.dbstore = await dbc.initialize(this.context)
+    await dbc.initialize(this.context)
+    // 传递数据库操作对象
     this.store = dbc.store
+    // 初始化数据库展示对象
     this.showService = new showService(this.store)
-
-    this.list_records = await this.showService.showAllRecord()
-    this.mk_date_list_records_init()
-    console.info('这是showAllRecord后');
-
+    // 初始化数据库操作对象
     let mm = new manageService()
     await mm.init()
     this.manage_service = mm
+
+    // 获得所有记录
+    this.list_records = await this.showService.showAllRecord()
+    // 记录按时间分类
+    this.mk_date_list_records_init()
+
   }
   async onPageShow(){
+    // 每次页面切换的时候，都要重新刷新列表
+    // 从添加页面转回来，需要重新刷新，显示新增数据，也需要重新分类
     this.list_records = await this.showService.showAllRecord()
     this.mk_date_list_records_init()
     console.info('onPageShow');
@@ -137,7 +142,6 @@ struct Index {
       .height('48vp')
       .position({ x: CommonConstants.EDIT_POSITION_X, y: CommonConstants.EDIT_POSITION_Y })
       .onClick(() => {
-        this.isInsert = true;
         this.newAccount = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '', purpose: '', date: ''};
         onJumpClick()
       })
@@ -149,6 +153,10 @@ struct Index {
   }
 
   mk_date_list_records_init(){
+    // 根据不同的时间，分类记录
+    // 分类列表的元素是json数据
+    // 其中第一项date是时间
+    // 第二项list_records 是一个数组，存的是同一时间的记录
     const date_set = new Set<String>()
     this.ca_list_records = []
 
