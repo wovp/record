@@ -23,9 +23,8 @@ import { PayList, EarnList } from '../model/AccountList';
 @CustomDialog
 export struct DialogComponent {
   controller?: CustomDialogController;
-  @Link isInsert: boolean;
   @Link newAccount: Record;
-  confirm?: (isInsert: boolean, newAccount: Record) => void;
+  confirm?: (newAccount: Record) => void;
   private scroller: Scroller = new Scroller();
   private inputAmount = '';
   @State payList: Array<recordItem> = PayList;
@@ -212,7 +211,7 @@ export struct DialogComponent {
             let matchValue: Array<string> | null = this.inputAmount.match(regex);
             if (matchValue !== null && matchValue[0] === this.inputAmount) {
               this.newAccount.amount = Number(this.inputAmount);
-              this.confirm && this.confirm(this.isInsert, this.newAccount);
+              this.confirm && this.confirm(this.newAccount);
               this.controller?.close();
             } else {
               prompt.showToast({ message: CommonConstants.TOAST_TEXT_2, bottom: CommonConstants.PROMPT_BOTTOM });

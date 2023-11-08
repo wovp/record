@@ -23,6 +23,18 @@ struct Index {
   @State newAccount: Record = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '00', purpose: '00', date: '00'};
   @State ca_list_records: any[] = []
 
+  dialogController: CustomDialogController = new CustomDialogController({
+    builder: DialogComponent({
+      newAccount: $newAccount,
+      confirm: (newAccount: Record) => this.accept(newAccount)
+    }),
+    customStyle: true,
+    alignment: DialogAlignment.Bottom
+  });
+  accept(b){
+
+  }
+
   @Builder itemEnd(index: number) {
     // 侧滑后尾端出现的组件
     Button({ type: ButtonType.Circle }) {
@@ -106,6 +118,10 @@ struct Index {
               }
               .swipeAction({ end: this.itemEnd.bind(this, item.id) }) // 设置侧滑属性
               .height(100)
+              .onClick(()=>{
+                this.newAccount = item;
+                this.dialogController.open()
+              })
 
             }, item => item.id)
           }
