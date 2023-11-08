@@ -32,7 +32,7 @@ struct Index {
         .backgroundColor(Color.White)
     }
     .onClick(async () => {
-      this.manage_service.deleteRecord(index)
+      let de = await this.manage_service.deleteRecord(index)
       this.list_records = await this.showService.showAllRecord()
       this.mk_date_list_records_init()
     })
