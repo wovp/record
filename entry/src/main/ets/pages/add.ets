@@ -20,8 +20,6 @@ import Record from '../model/record'
 import { PayList, EarnList } from '../model/AccountList';
 import router from '@ohos.router';
 import manageService from '../services/manageService';
-import relationalStore from '@ohos.data.relationalStore';
-import DatePickerDialogExample from '../view/dateDialog';
 @Entry
 @Component
 struct addComponent {
@@ -35,6 +33,7 @@ struct addComponent {
   @State curIndex: number = 0;
   @State curType: string = '';
   selectedDate: Date = new Date("2010-1-1");
+  @State showDate: string = ''; // 这个是因为日期选择按钮的传入的日期不能为State修饰的变量
   @State inputNotes: string = '';
 
 
@@ -66,6 +65,7 @@ struct addComponent {
       amount: ss['amount'],
       date: ss['date']
     };
+    this.showDate = this.selectedDate.toDateString()
     this.inputAmount = this.newAccount.amount.toString();
     this.curIndex = this.newAccount.accountType;
     this.curType = this.newAccount.typeText;
@@ -167,9 +167,12 @@ struct addComponent {
       })
 
       Column() {
-        // DatePickerDialogExample({selectedDate: $selectedDate})
-        // DatePickerDialogExample()
-        Button("DatePickerDialog")
+        Text(this.showDate)
+          .fontSize(20)
+          .backgroundColor('#fff1f3f5')
+          .width('100%')
+          .padding(5)
+        Button("选择日期")
           .margin(20)
           .onClick(() => {
             DatePickerDialog.show({
@@ -180,6 +183,8 @@ struct addComponent {
                 // 通过Date的setFullYear方法设置按下确定按钮时的日期，这样当弹窗再次弹出时显示选中的是上一次确定的日期
                 this.selectedDate.setFullYear(value.year, value.month, value.day)
                 console.info("DatePickerDialog:onAccept()" + JSON.stringify(value))
+                this.showDate = this.selectedDate.toLocaleString()
+                console.info(this.showDate)
               },
               onCancel: () => {
                 console.info("DatePickerDialog:onCancel()")

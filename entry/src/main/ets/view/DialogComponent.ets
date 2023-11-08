@@ -147,6 +147,11 @@ export struct DialogComponent {
       })
 
       Column() {
+        Text(this.newAccount.date)
+          .fontSize(20)
+          .backgroundColor('#fff1f3f5')
+          .width('100%')
+          .padding(5)
         Text('金额')
           .width(CommonConstants.FULL_WIDTH)
           .fontSize('20vp')
