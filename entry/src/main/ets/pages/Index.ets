@@ -8,6 +8,7 @@ import Record from '../model/record'
 import showService from '../services/showServices'
 import manageService from '../services/manageService';
 import { DialogComponent } from '../view/DialogComponent'
+import { DataAnlyseOutCome } from '../view/DataAnlyseOutCome'
 @Entry
 @Component
 struct Index {
@@ -34,6 +35,14 @@ struct Index {
   accept(b){
 
   }
+
+  dcOutCome: CustomDialogController = new CustomDialogController({
+    builder: DataAnlyseOutCome({
+      newAccount: $list_records,
+      confirm: () => this.accept(this.isSelected)
+    }),
+    alignment: DialogAlignment.Bottom
+  })
 
   @Builder itemEnd(index: number) {
     // 侧滑后尾端出现的组件
@@ -111,6 +120,10 @@ struct Index {
               this.selected_show(index)
               this.mk_date_list_records_init()
             }
+          })
+        Button('支出分析')
+          .onClick(()=>{
+            this.dcOutCome.open()
           })
         Text('ces')
 

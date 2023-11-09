@@ -51,7 +51,25 @@ export const PayList: Array<recordItem> = [
     iconSelected: $rawfile('pets_selected.png'),
     accountType: 0,
     typeText: '宠物'
-  }
+  },
+  {
+    icon: $rawfile('app_yifu.png'),
+    iconSelected: $rawfile('app_selected_yifu.png'),
+    accountType: 0,
+    typeText: '衣服'
+  },
+  {
+    icon: $rawfile('app_yiliao.png'),
+    iconSelected: $rawfile('app_selected_yiliao.png'),
+    accountType: 0,
+    typeText: '医疗服务'
+  },
+  {
+    icon: $rawfile('app_qita.png'),
+    iconSelected: $rawfile('app_selected_qita.png'),
+    accountType: 0,
+    typeText: '其他'
+  },
 ]
 
 export const EarnList: Array<recordItem> = [
