@@ -18,6 +18,9 @@ struct Index {
   public manage_service: manageService = null       // 用于处理数据的服务接口
   @State list_records: Record[] = []                // 查询到的所有记录
   @State isSelected: boolean = false;
+  tSearchController: SearchController = new SearchController()
+  @State isSearch: boolean = false;
+  @State searchText: string = '';
   @State selected_records: Record[] = []            // 选中分类的记录列表，只在isSelected为True时有用
   // 用于传递参数，包括详情弹窗 和 添加
   @State newAccount: Record = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '00', purpose: '00', date: '00'};
@@ -126,6 +129,25 @@ struct Index {
             this.dcOutCome.open()
           })
         Text('ces')
+        Search({ value: this.searchText, placeholder: 'Type to search...', controller: this.tSearchController })
+          .searchButton('SEARCH')
+          .backgroundColor('#F5F5F5')
+          .placeholderColor(Color.Grey)
+          .placeholderFont({ size: 14, weight: 400 })
+          .textFont({ size: 14, weight: 400 })
+          .onSubmit((value: string) => {
+            this.searchText = value
+            if (this.searchText === '') {
+              this.isSearch = false
+              this.mk_date_list_records_init()
+            }
+            else{
+              this.isSearch = true
+              this.searchShow()
+              this.mk_date_list_records_init()
+            }
+          })
+          .margin(20)
 
       }
       .backgroundColor(Color.Red)
@@ -195,7 +217,8 @@ struct Index {
     // 第二项list_records 是一个数组，存的是同一时间的记录
     const date_set = new Set<String>()
     this.ca_list_records = []
-    const nn = this.isSelected ? this.selected_records: this.list_records;
+    // 根据分类选择
+    const nn = (this.isSelected || this.isSearch) ? this.selected_records: this.list_records;
 
     for (let i = 0; i < nn.length; i++){
       const record = nn[i];
@@ -232,6 +255,20 @@ struct Index {
       }
     }
     this.isSelected = true
+  }
+  searchShow(){
+    if (!this.isSearch) {
+      return;
+    }
+    const mm = this.list_records
+    this.selected_records = []
+    for (let index = 0; index < mm.length; index++) {
+      const element = mm[index];
+      if (element.typeText === this.searchText) {
+        this.selected_records.push(element)
+      }
+    }
+    this.isSearch = true
   }
 
 }
