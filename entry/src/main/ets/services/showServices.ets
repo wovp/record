@@ -53,26 +53,36 @@ class showService{
     // 执行查询操作
     const resultSet = await this.store.querySql(`SELECT * FROM EXPENSES WHERE ${condition}`);
 
-    // 处理查询结果，转换为数组格式
-    const records: any[] = [];
+    let list_records: Record[] = [];
     for(let i = 0; i < resultSet.rowCount; i++){
       if(!resultSet.isEnded){
         resultSet.goToNextRow()
       }
       let record = {};
-      for (let j = 0; j < this.rowName.length; j++) {
-        let k = resultSet.getColumnIndex(this.rowName[j]);
-        if (this.rowName[j] == 'ID') {
-          record[this.rowName[j]] = resultSet.getLong(k);
-        } else if (this.rowName[j] == 'AMOUNT') {
-          record[this.rowName[j]] = resultSet.getDouble(k);
-        } else {
-          record[this.rowName[j]] = resultSet.getString(k);
+      for(let j = 0; j < this.rowName.length; j++){
+
+        let k = resultSet.getColumnIndex(this.rowName[j])
+        if (this.rowName[j] == 'ID' || this.rowName[j] == 'ACCOUNTTYPE') {
+          record[this.rowName[j]] = resultSet.getLong(k)
+        }
+        else if (this.rowName[j] == 'AMOUNT') {
+          record[this.rowName[j]] = resultSet.getDouble(k)
+        }
+        else {
+          record[this.rowName[j]] = resultSet.getString(k)
         }
       }
-      records.push(record);
+      let re: Record = new Record()
+      re.id = record['ID']
+      re.amount = record['AMOUNT']
+      re.notes = record['NOTES']
+      re.typeText = record['MYTYPE']
+      re.purpose = record['PURPOSE']
+      re.date = record['DATE']
+      re.accountType = record['ACCOUNTTYPE']
+      list_records.push(re)
     }
-    return records;
+    return list_records;
   }
 
   public async getRecordsByCategory(category: string): Promise<any[]> {

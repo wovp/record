@@ -20,6 +20,7 @@ import Record from '../model/record'
 import { PayList, EarnList } from '../model/AccountList';
 import router from '@ohos.router';
 import manageService from '../services/manageService';
+import DateToStr from '../utils/DateToStr';
 @Entry
 @Component
 struct addComponent {
@@ -183,7 +184,7 @@ struct addComponent {
                 // 通过Date的setFullYear方法设置按下确定按钮时的日期，这样当弹窗再次弹出时显示选中的是上一次确定的日期
                 this.selectedDate.setFullYear(value.year, value.month, value.day)
                 console.info("DatePickerDialog:onAccept()" + JSON.stringify(value))
-                this.showDate = this.selectedDate.toLocaleString()
+                this.showDate = DateToStr(this.selectedDate)
                 console.info(this.showDate)
               },
               onCancel: () => {
@@ -265,16 +266,7 @@ struct addComponent {
             }
             this.newAccount.notes = this.inputNotes
 
-            let ttt = this.selectedDate.toLocaleString().split(',')[0]
-            ttt = ttt.replace('时间', '')
-            let tmp01 = ttt.split('/')
-            let tmp0101 = tmp01[0]
-            tmp01[0] = tmp01[2]
-            tmp01[2] = tmp01[1]
-            tmp01[1] = tmp0101
-
-
-            ttt = ''+ tmp01[0] + '-' + tmp01[1] + '-' + tmp01[2]
+            let ttt = DateToStr(this.selectedDate)
 
             this.newAccount.date = ttt
             await this.manage_service.addRecord(this.newAccount)

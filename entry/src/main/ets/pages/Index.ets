@@ -9,6 +9,7 @@ import showService from '../services/showServices'
 import manageService from '../services/manageService';
 import { DialogComponent } from '../view/DialogComponent'
 import { DataAnlyseOutCome } from '../view/DataAnlyseOutCome'
+import DateToStr from '../utils/DateToStr'
 @Entry
 @Component
 struct Index {
@@ -20,7 +21,13 @@ struct Index {
   @State isSelected: boolean = false;
   tSearchController: SearchController = new SearchController()
   @State isSearch: boolean = false;
+  @State isDateRange: boolean = false;
+  @State searchIsDate: boolean = false;     // 搜索框是否是搜索分类
   @State searchText: string = '';
+  seStartDate: Date = new Date("2010-1-1");
+  seEndDate: Date = new Date("2010-1-1");
+  @State showStartDate: string = '请选择开始时间';
+  @State showEndDate: string = '请选择结束时间';
   @State selected_records: Record[] = []            // 选中分类的记录列表，只在isSelected为True时有用
   // 用于传递参数，包括详情弹窗 和 添加
   @State newAccount: Record = { id: 0, accountType: 0, typeText: '', amount: 0 , notes: '00', purpose: '00', date: '00'};
@@ -102,57 +109,131 @@ struct Index {
   build() {
 
     Column() {
-      Row() {
-        Select([{ value: '支出'},
-                { value: '收入' },
-          {value: '所有'}
-        ])
-          .selected(2)
-          .value('TTTTT')
-          .font({ size: 16, weight: 500 })
-          .fontColor('#182431')
-          .selectedOptionFont({ size: 16, weight: 400 })
-          .optionFont({ size: 16, weight: 400 })
-          .onSelect((index: number) => {
-            console.info('Select:' + index)
-            if(index === 2){
-              this.isSelected = false;
-              this.mk_date_list_records_init()
-            }
-            else {
-              this.selected_show(index)
-              this.mk_date_list_records_init()
-            }
-          })
-        Button('支出分析')
-          .onClick(()=>{
-            this.dcOutCome.open()
-          })
-        Text('ces')
-        Search({ value: this.searchText, placeholder: 'Type to search...', controller: this.tSearchController })
-          .searchButton('SEARCH')
-          .backgroundColor('#F5F5F5')
-          .placeholderColor(Color.Grey)
-          .placeholderFont({ size: 14, weight: 400 })
-          .textFont({ size: 14, weight: 400 })
-          .onSubmit((value: string) => {
-            this.searchText = value
-            if (this.searchText === '') {
-              this.isSearch = false
-              this.mk_date_list_records_init()
-            }
-            else{
-              this.isSearch = true
-              this.searchShow()
-              this.mk_date_list_records_init()
-            }
-          })
-          .margin(20)
+      Column() {
+        Row(){
+          Select([{ value: '支出'},
+            { value: '收入' },
+            {value: '所有'}
+          ])
+            .selected(2)
+            .value('TTTTT')
+            .font({ size: 16, weight: 500 })
+            .fontColor('#182431')
+            .selectedOptionFont({ size: 16, weight: 400 })
+            .optionFont({ size: 16, weight: 400 })
+            .onSelect((index: number) => {
+              console.info('Select:' + index)
+              if(index === 2){
+                this.isSelected = false;
+                this.mk_date_list_records_init()
+              }
+              else {
+                this.selected_show(index)
+                this.mk_date_list_records_init()
+              }
+            })
+          Button('支出分析')
+            .onClick(()=>{
+              this.dcOutCome.open()
+            })
+        }
 
+        Row(){
+          Select([{ value: '时间'},
+            { value: '分类' }
+          ])
+            .selected(1)
+            .value('分类')
+            .font({ size: 16, weight: 500 })
+            .fontColor('#182431')
+            .selectedOptionFont({ size: 16, weight: 400 })
+            .optionFont({ size: 16, weight: 400 })
+            .onSelect((index: number) => {
+              console.info('Select:' + index)
+              if(index === 0){
+                this.searchIsDate = true;
+              }
+              else {
+                this.searchIsDate = false;
+                this.isDateRange = false;
+                this.mk_date_list_records_init();
+              }
+            })
+          if (this.searchIsDate){
+            Row({space: 5}){
+              Text('从')
+              Text(this.showStartDate)
+                .onClick(()=>{
+                  DatePickerDialog.show({
+                    start: new Date("2000-1-1"),
+                    end: new Date("2100-12-31"),
+                    selected: this.seStartDate,
+                    onAccept: (value: DatePickerResult) => {
+                      this.seStartDate.setFullYear(value.year, value.month, value.day)
+                      this.showStartDate = DateToStr(this.seStartDate)
+                    },
+                    onCancel: () => {},
+                    onChange: (value: DatePickerResult) => {
+                      this.seStartDate.setFullYear(value.year, value.month, value.day)
+                      this.showStartDate = DateToStr(this.seStartDate)
+                    }
+                  })
+                })
+              Text('到')
+              Text(this.showEndDate)
+                .onClick(()=>{
+                  DatePickerDialog.show({
+                    start: new Date("2000-1-1"),
+                    end: new Date("2100-12-31"),
+                    selected: this.seEndDate,
+                    onAccept: (value: DatePickerResult) => {
+                      this.seEndDate.setFullYear(value.year, value.month, value.day)
+                      this.showEndDate = DateToStr(this.seEndDate)
+                    },
+                    onCancel: () => {},
+                    onChange: async (value: DatePickerResult) => {
+                      this.seEndDate.setFullYear(value.year, value.month, value.day)
+                      this.showEndDate = DateToStr(this.seEndDate)
+                      if (this.entureDateRight(this.seStartDate, this.seEndDate)) {
+
+                      }
+                      this.selected_records = await this.showService.getRecordsByTimeRange(this.showStartDate, this.showEndDate);
+                      this.isDateRange = true;
+                      this.mk_date_list_records_init()
+                    }
+                  })
+                })
+            }
+            .width(200)
+            .height(100)
+          }
+          else{
+            Search({ value: this.searchText, placeholder: 'Type to search...', controller: this.tSearchController })
+              .searchButton('SEARCH')
+              .backgroundColor('#F5F5F5')
+              .placeholderColor(Color.Grey)
+              .placeholderFont({ size: 14, weight: 400 })
+              .textFont({ size: 14, weight: 400 })
+              .onSubmit((value: string) => {
+                this.searchText = value
+                if (this.searchText === '') {
+                  this.isSearch = false
+                  this.mk_date_list_records_init()
+                }
+                else{
+                  this.isSearch = true
+                  this.searchShow()
+                  this.mk_date_list_records_init()
+                }
+              })
+              .margin(20)
+          }
+
+        }
       }
       .backgroundColor(Color.Red)
       .width('100%')
-      .height(100)
+      .height(200)
 
       List() {
         ForEach(this.ca_list_records, li =>{
@@ -218,7 +299,7 @@ struct Index {
     const date_set = new Set<String>()
     this.ca_list_records = []
     // 根据分类选择
-    const nn = (this.isSelected || this.isSearch) ? this.selected_records: this.list_records;
+    const nn = (this.isSelected || this.isSearch || this.isDateRange) ? this.selected_records: this.list_records;
 
     for (let i = 0; i < nn.length; i++){
       const record = nn[i];
@@ -269,6 +350,12 @@ struct Index {
       }
     }
     this.isSearch = true
+  }
+
+  entureDateRight(st: Date, end: Date){
+    if(st > end){
+      return false
+    }
   }
 
 }
