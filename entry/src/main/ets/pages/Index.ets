@@ -15,7 +15,7 @@ import DateToStr from '../utils/DateToStr'
 struct Index {
   context = getContext()
   public store: relationalStore.RdbStore  // 用于初始化数据库
-  public showService: showService         // 用于展示数据的服务接口
+  @State showService: showService = null         // 用于展示数据的服务接口
   public manage_service: manageService = null       // 用于处理数据的服务接口
   @State list_records: Record[] = []                // 查询到的所有记录
   @State isSelected: boolean = false;
@@ -49,6 +49,7 @@ struct Index {
   dcOutCome: CustomDialogController = new CustomDialogController({
     builder: DataAnlyseOutCome({
       newAccount: $list_records,
+      shm : $showService,
       confirm: () => this.accept(this.isSelected)
     }),
     alignment: DialogAlignment.Bottom
@@ -327,7 +328,7 @@ struct Index {
   }
 
   selected_show(ii: number){
-    const mm = this.list_records
+    const mm = (this.isSelected || this.isDateRange) ? this.selected_records : this.list_records
     this.selected_records = []
     for (let index = 0; index < mm.length; index++) {
       const element = mm[index];
@@ -341,7 +342,7 @@ struct Index {
     if (!this.isSearch) {
       return;
     }
-    const mm = this.list_records
+    const mm = (this.isSelected || this.isDateRange) ? this.selected_records : this.list_records
     this.selected_records = []
     for (let index = 0; index < mm.length; index++) {
       const element = mm[index];
