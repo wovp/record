@@ -31,7 +31,7 @@ export default class CommonConstants {
   static readonly FULL_WIDTH = '100%';
   static readonly FULL_HEIGHT = '100%';
   static readonly DIALOG_HEIGHT = '55%';
-  static readonly TABS_HEIGHT = '45%';
+  static readonly TABS_HEIGHT = '50%';
   static readonly MINIMUM_SIZE = 0;
   static readonly FULL_SIZE = 1;
   static readonly PROMPT_BOTTOM = '70vp';

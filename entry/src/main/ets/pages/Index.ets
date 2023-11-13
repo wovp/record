@@ -10,6 +10,7 @@ import manageService from '../services/manageService';
 import { DialogComponent } from '../view/DialogComponent'
 import { DataAnlyseOutCome } from '../view/DataAnlyseOutCome'
 import DateToStr from '../utils/DateToStr'
+import { DataAnlyseInCome } from '../view/DataAnlyseInCome'
 @Entry
 @Component
 struct Index {
@@ -48,6 +49,15 @@ struct Index {
 
   dcOutCome: CustomDialogController = new CustomDialogController({
     builder: DataAnlyseOutCome({
+      newAccount: $list_records,
+      shm : $showService,
+      confirm: () => this.accept(this.isSelected)
+    }),
+    alignment: DialogAlignment.Bottom
+  })
+
+  dcInCome: CustomDialogController = new CustomDialogController({
+    builder: DataAnlyseInCome({
       newAccount: $list_records,
       shm : $showService,
       confirm: () => this.accept(this.isSelected)
@@ -117,7 +127,7 @@ struct Index {
             {value: '所有'}
           ])
             .selected(2)
-            .value('TTTTT')
+            .value('所有')
             .font({ size: 16, weight: 500 })
             .fontColor('#182431')
             .selectedOptionFont({ size: 16, weight: 400 })
@@ -137,7 +147,13 @@ struct Index {
             .onClick(()=>{
               this.dcOutCome.open()
             })
+          Button('收入分析')
+            .onClick(()=>{
+              this.dcInCome.open()
+            })
         }
+        .width('100%')
+        .justifyContent(FlexAlign.Start)
 
         Row(){
           Select([{ value: '时间'},
@@ -180,6 +196,7 @@ struct Index {
                     }
                   })
                 })
+                .fontColor('#ff507ae9')
               Text('到')
               Text(this.showEndDate)
                 .onClick(()=>{
@@ -204,9 +221,12 @@ struct Index {
                     }
                   })
                 })
+                .fontColor('#ff507ae9')
             }
-            .width(200)
-            .height(100)
+            .width(300)
+            .height(60)
+            .justifyContent(FlexAlign.Start)
+
           }
           else{
             Search({ value: this.searchText, placeholder: 'Type to search...', controller: this.tSearchController })
@@ -227,14 +247,15 @@ struct Index {
                   this.mk_date_list_records_init()
                 }
               })
-              .margin(20)
+              .margin(10)
+              .width(280)
           }
 
         }
       }
-      .backgroundColor(Color.Red)
       .width('100%')
-      .height(200)
+      .height(105)
+      .backgroundColor('#ffb3f1ec')
 
       List() {
         ForEach(this.ca_list_records, li =>{
@@ -328,7 +349,8 @@ struct Index {
   }
 
   selected_show(ii: number){
-    const mm = (this.isSelected || this.isDateRange) ? this.selected_records : this.list_records
+    // const mm = (this.isSelected || this.isDateRange) ? this.selected_records : this.list_records
+    const mm = this.list_records;
     this.selected_records = []
     for (let index = 0; index < mm.length; index++) {
       const element = mm[index];

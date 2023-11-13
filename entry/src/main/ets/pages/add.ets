@@ -83,12 +83,6 @@ struct addComponent {
 
   build() {
     Column() {
-      Image($rawfile('half.png'))
-        .width('64vp')
-        .height('24vp')
-        .onClick(() => {
-
-        })
 
       Tabs({ barPosition: BarPosition.Start, index: this.curIndex }) {
 
@@ -139,7 +133,7 @@ struct addComponent {
                     .fontColor(this.curType === item.typeText ? Color.White : '#FF007DFF')
                     .margin({ top: ('8vp') })
                 }
-                .width('64vp')
+                .width('86vp')
                 .aspectRatio(CommonConstants.FULL_SIZE)
                 .padding({ top: ('12vp') })
                 .margin({ top: ('16vp'), left: ('12vp') })
@@ -200,7 +194,7 @@ struct addComponent {
       .padding({ left: ('12vp'), right: ('12vp') })
         Text('金额')
           .width(CommonConstants.FULL_WIDTH)
-          .fontSize('20vp')
+          .fontSize('30vp')
           .fontColor(Color.Black)
 
         Column() {
@@ -223,7 +217,7 @@ struct addComponent {
 
         Text('备注')
           .width(CommonConstants.FULL_WIDTH)
-          .fontSize('20vp')
+          .fontSize('30vp')
           .fontColor(Color.Black)
 
         Column() {

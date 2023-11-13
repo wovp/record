@@ -17,55 +17,55 @@ import recordItem from './recordItem';
 
 export const PayList: Array<recordItem> = [
   {
-    icon: $rawfile('foods.png'),
+    icon: $rawfile('icon_food.png'),
     iconSelected: $rawfile('foods_selected.png'),
     accountType: 0,
     typeText: '吃饭'
   },
   {
-    icon: $rawfile('snacks.png'),
+    icon: $rawfile('icon_shopping.png'),
     iconSelected: $rawfile('snacks_selected.png'),
     accountType: 0,
-    typeText: '零食'
+    typeText: '购物'
   },
   {
-    icon: $rawfile('fuel.png'),
+    icon: $rawfile('icon_fuel.png'),
     iconSelected: $rawfile('fuel_selected.png'),
     accountType: 0,
     typeText: '汽车加油'
   },
   {
-    icon: $rawfile('travel.png'),
+    icon: $rawfile('icon_study.png'),
     iconSelected: $rawfile('travel_selected.png'),
     accountType: 0,
-    typeText: '旅游'
+    typeText: '教育'
   },
   {
-    icon: $rawfile('games.png'),
+    icon: $rawfile('icon_entertainment.png'),
     iconSelected: $rawfile('games_selected.png'),
     accountType: 0,
     typeText: '娱乐'
   },
   {
-    icon: $rawfile('pets.png'),
+    icon: $rawfile('icon_tour.png'),
     iconSelected: $rawfile('pets_selected.png'),
     accountType: 0,
-    typeText: '宠物'
+    typeText: '旅行'
   },
   {
-    icon: $rawfile('app_yifu.png'),
+    icon: $rawfile('icon_clothes.png'),
     iconSelected: $rawfile('app_selected_yifu.png'),
     accountType: 0,
     typeText: '衣服'
   },
   {
-    icon: $rawfile('app_yiliao.png'),
+    icon: $rawfile('icon_medicine.png'),
     iconSelected: $rawfile('app_selected_yiliao.png'),
     accountType: 0,
     typeText: '医疗服务'
   },
   {
-    icon: $rawfile('app_qita.png'),
+    icon: $rawfile('icon_other.png'),
     iconSelected: $rawfile('app_selected_qita.png'),
     accountType: 0,
     typeText: '其他'
@@ -84,16 +84,31 @@ export const EarnList: Array<recordItem> = [
     iconSelected: $rawfile('invest_selected.png'),
     accountType: 1,
     typeText: '投资'
-  }
+  },
+  {
+    icon: $rawfile('invest.png'),
+    iconSelected: $rawfile('invest_selected.png'),
+    accountType: 1,
+    typeText: '奖学金'
+  },
+  {
+    icon: $rawfile('invest.png'),
+    iconSelected: $rawfile('invest_selected.png'),
+    accountType: 1,
+    typeText: '幸运'
+  },
 ]
 
 export const ImageList: Record<string,Resource> = {
-  '吃饭': $rawfile('foods.png'),
-  '零食': $rawfile('snacks.png'),
-  '汽车加油': $rawfile('fuel.png'),
-  '旅游': $rawfile('travel.png'),
-  '娱乐': $rawfile('games.png'),
-  '宠物': $rawfile('pets.png'),
+  '吃饭': $rawfile('icon_food.png'),
+  '购物': $rawfile('icon_shopping.png'),
+  '汽车加油': $rawfile('icon_fuel.png'),
+  '旅游': $rawfile('icon_tour.png'),
+  '娱乐': $rawfile('icon_entertainment.png'),
+  '教育': $rawfile('icon_study.png'),
+  '医疗服务': $rawfile('icon_medicine.png'),
+  '衣服': $rawfile('app_yifu.png'),
+  '其他': $rawfile('app_qita.png'),
   '工作收入': $rawfile('income.png'),
   '投资': $rawfile('invest.png')
 }
